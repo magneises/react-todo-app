@@ -10,13 +10,6 @@ export default function Home() {
     };
 
 
-
-
-
-
-
-
-
     return (
         <div>
           <div className='todoEntryForm'>
@@ -33,7 +26,6 @@ export default function Home() {
               </label>
             </form>
           </div>
-          <div className='todoQuickGlance'></div>
         </div>
       );
     }
