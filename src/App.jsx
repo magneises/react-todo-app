@@ -1,15 +1,24 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from './components/Home';
+import { useState, useEffect } from 'react';
 import './App.css';
-import initialData from './Data';
+
+const LOCAL_STORAGE_KEY = "todos";
 
 function App() {
-  const [todos, setTodos] = useState(initialData);
+  const [todos, setTodos] = useState(() => {
+    const savedTodos = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return savedTodos ? JSON.parse(savedTodos) : [];
+  });
+
+  const [task, setTask] = useState("");
   const [editingTodoId, setEditingTodoId] = useState(null);
   const [editText, setEditText] = useState("");
 
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
+  }, [todos]);
+
   const addTodo = (title) => {
+    if (title.trim() === "") return;
     const newTodo = {
       userId: 1,
       id: todos.length + 1,
@@ -17,6 +26,7 @@ function App() {
       completed: false,
     };
     setTodos([newTodo, ...todos]);
+    setTask("");
   };
 
   const toggleComplete = (id) => {
@@ -31,13 +41,11 @@ function App() {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
-  // edit function
   const startEditing = (id, title) => {
     setEditingTodoId(id);
     setEditText(title);
   };
 
-  
   const editTodo = (id) => {
     setTodos(
       todos.map((todo) =>
@@ -48,13 +56,25 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route path='/' element={<Home addTodo={addTodo} />} />
-      </Routes>
+    <div className="App">
+      <div className='todoEntryForm'>
+        <h1>Todo List</h1>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          addTodo(task);
+        }}>
+          <input
+            type='text'
+            placeholder='Add task'
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+          />
+          <button type='submit'>Add</button>
+        </form>
+      </div>
 
       <div className='todoQuickGlance'>
-        <h2>Todo List</h2>
+        <h2>Todo's</h2>
         <ul>
           {todos.map((todo) => (
             <li key={todo.id}>
@@ -84,7 +104,8 @@ function App() {
           ))}
         </ul>
       </div>
-    </Router>
+    </div>
   );
 }
+
 export default App;
