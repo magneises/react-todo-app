@@ -97,7 +97,7 @@ function App() {
                   />
                   {todo.title}
                   <button onClick={() => startEditing(todo.id, todo.title)}>Edit</button>
-                  <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+                  <button onClick={() => deleteTodo(todo.id)} disabled={!todo.completed}>Delete</button>
                 </>
               )}
             </li>
